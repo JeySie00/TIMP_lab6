@@ -15,7 +15,7 @@ jobs:
                         
     - name: release
       id: create_release
-      uses: actions/create-release@v1
+      uses: actions/create-release@v3
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -135,7 +135,7 @@ jobs:
     needs: Make_GitHub_Release
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: prepare environment
         run : |

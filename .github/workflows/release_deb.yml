@@ -14,7 +14,15 @@ jobs:
         run: sudo apt install -y cmake g++ cpack clang
           
       - name: Build Solver App with Debian Generator
-        run: ./scripts/debianPackage.sh
+        run: |
+          mkdir solver_application/build
+          cd solver_application/build
+          cmake -DCPACK_GENERATOR_DEB=ON ..
+          make package
+          make package_source
+          cd ..
+          mkdir artifacts
+          mv build/*.deb artifacts
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:

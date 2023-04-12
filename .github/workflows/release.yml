@@ -16,9 +16,8 @@ jobs:
     - name: release
       id: create_release
       uses: marvinpinto/action-automatic-releases@latest
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           tag_name: ${{ github.ref }}
           release_name: release ${{ github.ref }}
           body: |

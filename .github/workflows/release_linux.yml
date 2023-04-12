@@ -1,0 +1,68 @@
+name: release_linux
+
+on:
+  push:
+    tags:
+      - 'v*'
+                        
+jobs:
+  Make_GitHub_Release:
+    name: create release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+                        
+    - name: release
+      id: create_release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          tag_name: ${{ github.ref }}
+          release_name: release ${{ github.ref }}
+          body: |
+            Upload archive and binary files for uploading
+          draft: false
+          prerelease: false
+
+  Linux_Binary:
+    needs: Make_GitHub_Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: prepare environment
+      run : |
+        cmake --version
+        sudo apt-get install rpm
+    - name: build binary files
+      run : |
+        mkdir cmake && cd cmake
+        cmake -DGENERATOR=BIN ..
+        make
+        cpack -G DEB
+        cpack -G RPM
+
+    - name: DEB
+      id: DEB
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with: 
+       upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
+       asset_path: ./cmake/solver-0.1.1-Linux.deb
+       asset_name: solver_app-${{ github.ref_name }}.deb
+       asset_content_type: application/deb
+
+    - name: RPM
+      id: RPM
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with: 
+       upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
+       asset_path: ./cmake/solver-0.1.1-Linux.rpm
+       asset_name: solver_app-${{ github.ref_name }}.rpm
+       asset_content_type: application/rpm
+
+ 

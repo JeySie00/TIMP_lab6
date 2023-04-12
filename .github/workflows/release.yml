@@ -15,7 +15,7 @@ jobs:
                         
     - name: release
       id: create_release
-      uses: actions/create-release@v1
+      uses: marvinpinto/action-automatic-releases@latest
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -25,7 +25,6 @@ jobs:
             Upload archive and binary files for uploading
           draft: false
           prerelease: false
-          allowUpdates: true
 
   Archives:
     needs: Make_GitHub_Release

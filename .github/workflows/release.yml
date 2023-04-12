@@ -25,6 +25,7 @@ jobs:
             Upload archive and binary files for uploading
           draft: false
           prerelease: false
+          allowUpdates: true
 
   Archives:
     needs: Make_GitHub_Release

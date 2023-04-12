@@ -7,47 +7,47 @@ on:
                         
 jobs:
   Make_GitHub_Release:
-    name: create release
+    name   : Create Release
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
                         
-    - name: release
-      id: create_release
+    - name: Release
+      id  : create_release
       uses: actions/create-release@v1
-      env:
+      env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           tag_name: ${{ github.ref }}
-          release_name: release ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           body: |
             Upload archive and binary files for uploading
           draft: false
           prerelease: false
-          allowUpdates: true
 
   Archives:
     needs: Make_GitHub_Release
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Git clone my repo
+      uses: actions/checkout@v1
 
-    - name: prepare environment
-      run: |
+    - name: Prepare environment
+      run : |
         cmake --version
-    - name: build achive files
+    - name: Build achive files
       run : |
         mkdir cmake && cd cmake
         cmake -DGENERATOR=ARC ..
         make
         cpack -G TGZ
         cpack -G ZIP
-    - name: TGZ
-      id: TGZ
+    - name: Upload TGZ
+      id  : TGZ
       uses: actions/upload-release-asset@v1
-      env:
+      env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with: 
        upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
@@ -55,10 +55,10 @@ jobs:
        asset_name: Solver-${{ github.ref_name }}.tar.gz
        asset_content_type: code/tgz
        
-    - name: ZIP
-      id: ZIP
+    - name: Upload ZIP
+      id  : ZIP
       uses: actions/upload-release-asset@v1
-      env:
+      env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with: 
        upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
@@ -70,13 +70,14 @@ jobs:
     needs: Make_GitHub_Release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Git clone my repo
+      uses: actions/checkout@v1
 
-    - name: prepare environment
+    - name: Prepare environment
       run : |
         cmake --version
         sudo apt-get install rpm
-    - name: build binary files
+    - name: Build binary files
       run : |
         mkdir cmake && cd cmake
         cmake -DGENERATOR=BIN ..
@@ -84,10 +85,10 @@ jobs:
         cpack -G DEB
         cpack -G RPM
         
-    - name: DEB
-      id: DEB
+    - name: Upload DEB
+      id  : DEB
       uses: actions/upload-release-asset@v1
-      env:
+      env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with: 
        upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
@@ -95,10 +96,10 @@ jobs:
        asset_name: solver_app-${{ github.ref_name }}.deb
        asset_content_type: application/deb
        
-    - name: RPM
-      id: RPM
+    - name: Upload RPM
+      id  : RPM
       uses: actions/upload-release-asset@v1
-      env:
+      env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with: 
        upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
@@ -110,21 +111,22 @@ jobs:
     needs: Make_GitHub_Release
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Git clone my repo
+      uses: actions/checkout@v1
 
-    - name: prepare environment
+    - name: Prepare environment
       run : |
         cmake --version
-    - name: build binary files
+    - name: Build binary files
       run : |
         mkdir cmake && cd cmake
         cmake -DGENERATOR=BIN ..
         cmake --build .
         cpack -C CPackConfig.cmake -G WIX
-    - name: MSI
-      id: MSI
+    - name: Upload MSI
+      id  : MSI
       uses: actions/upload-release-asset@v1
-      env:
+      env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with: 
        upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}
@@ -136,21 +138,22 @@ jobs:
     needs: Make_GitHub_Release
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Git clone my repo
+        uses: actions/checkout@v1
 
-      - name: prepare environment
+      - name: Prepare environment
         run : |
           cmake --version
-      - name: build binary files
+      - name: Build binary files
         run : |
           mkdir cmake && cd cmake
           cmake -DGENERATOR=BIN ..
           make
           cpack -G DragNDrop
-      - name: DMG
-        id: DMG
+      - name: Upload DMG
+        id  : MSI
         uses: actions/upload-release-asset@v1
-        env:
+        env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with: 
           upload_url: ${{ needs.Make_GitHub_Release.outputs.upload_url }}

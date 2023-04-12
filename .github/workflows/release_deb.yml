@@ -1,0 +1,26 @@
+name: release_deb
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:                        
+  release_deb:
+    name: release_01
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Building Preparation
+        run: sudo apt install -y cmake g++ cpack clang
+          
+      - name: Build Solver App with Debian Generator
+        run: ./scripts/debianPackage.sh
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: solver_application/artifacts/*
+        id: "automatic_releases"
+
+  

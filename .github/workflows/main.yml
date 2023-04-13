@@ -1,5 +1,6 @@
 name: Solver
 
+
 on:
   push:
     branches: [ "main" ]

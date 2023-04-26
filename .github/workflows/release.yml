@@ -1,4 +1,4 @@
-name: release
+name: release_pack
 
 on:
   push:
@@ -15,13 +15,18 @@ jobs:
                         
     - name: Release
       id  : create_release
-      uses: ncipollo/release-action@v1
+      uses: actions/create-release@v1
       env :
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag: ${{ github.ref }}
-        token: ${{ secrets.TOKEN }}
-        allowUpdates: true
+          allowUpdates: true
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Upload archive and binary files for uploading
+          draft: false
+          prerelease: false
+          
 
   Archives:
     needs: Make_GitHub_Release
